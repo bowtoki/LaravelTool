@@ -132,7 +132,7 @@
                     
 
                     <div id="outputToolBar" class="btn-group btn-group-sm right hidden-xs">
-                        <div class="cursor-pointer tree-rotate-180 btn-sm fa fa-tree" title="Tree view" onclick="changeOutputTreeMode()"></div>
+                        <div class="cursor-pointer tree-rotate-180 btn-sm fa fa-tree" title="Tree view" onclick="changeOutputTree()"></div>
                         <div class="cursor-pointer btn-sm fa fa-times" title="Clear" onclick="clearOutput()"></div>
                         <div class="cursor-pointer btn-sm fa fa-download" title="Download" onclick="downloadOutput()"></div>
                         <div id="outputcopy" title="Copy to Clipboard" class="cursor-pointer btn-sm btn-shrink fa fa-files-o" onclick="copyOutput()"></div>

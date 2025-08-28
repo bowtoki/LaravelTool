@@ -8,13 +8,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class JsonEditorController extends Controller
 {
-    // Hiển thị trang JSON Editor
     public function index()
     {
         return view('json-editor.index');
     }
-
-    // Validate JSON
     public function validateJSON(Request $request)
     {
         $json = $request->input('json');
@@ -28,7 +25,6 @@ class JsonEditorController extends Controller
         ]);
     }
 
-    // Beautify / Format JSON
     public function beautifyJSON(Request $request)
     {
         $json = $request->input('json');
@@ -46,7 +42,6 @@ class JsonEditorController extends Controller
         ], 400);
     }
 
-    // Minify JSON
     public function minifyJSON(Request $request)
     {
         $json = $request->input('json');
@@ -59,7 +54,6 @@ class JsonEditorController extends Controller
         ], 400);
     }
 
-    // Convert JSON to XML
     public function convertToXML(Request $request)
     {
         $json = $request->input('json');
@@ -81,27 +75,22 @@ class JsonEditorController extends Controller
             return response()->json(['error' => json_last_error_msg()], 400);
         }
 
-        // Đảm bảo $data là mảng
         if (!is_array($data)) {
             return response()->json(['error' => 'Invalid JSON format. Expected array or object.'], 400);
         }
 
         $output = fopen('php://temp', 'r+');
 
-        // Nếu là mảng nhiều dòng (array of arrays)
         if (isset($data[0]) && is_array($data[0])) {
-            // Header CSV
             fputcsv($output, array_keys($data[0]));
 
             foreach ($data as $row) {
-                // Flatten nested arrays thành string nếu cần
                 $row = array_map(function($item) {
                     return is_array($item) ? json_encode($item, JSON_UNESCAPED_UNICODE) : $item;
                 }, $row);
                 fputcsv($output, $row);
             }
         } else {
-            // Single object
             $row = array_map(function($item) {
                 return is_array($item) ? json_encode($item, JSON_UNESCAPED_UNICODE) : $item;
             }, $data);
@@ -113,7 +102,6 @@ class JsonEditorController extends Controller
         $csv = stream_get_contents($output);
         fclose($output);
 
-        // Thêm BOM để Excel hiển thị UTF-8 đúng
         $csv = "\xEF\xBB\xBF" . $csv;
 
         return response($csv, 200)
@@ -122,7 +110,6 @@ class JsonEditorController extends Controller
     }
 
 
-    // Convert JSON to YAML
     public function convertToYAML(Request $request)
     {
         $json = $request->input('json');
@@ -134,7 +121,6 @@ class JsonEditorController extends Controller
             ->header('Content-Type', 'text/yaml');
     }
 
-    // Download JSON file
     public function downloadJSON(Request $request)
     {
         $json = $request->input('json');
@@ -143,7 +129,6 @@ class JsonEditorController extends Controller
             ->header('Content-Disposition', 'attachment; filename="data.json"');
     }
 
-    // Helper: array to XML
     private function arrayToXML(array $data, \SimpleXMLElement &$xml)
     {
         foreach ($data as $key => $value) {

@@ -298,4 +298,7 @@ body {
 {
     max-width: 1800px;
 }
-
+.btn:hover
+{
+    border-color:black !important;
+}

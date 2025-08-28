@@ -111,11 +111,16 @@ function uploadData() {
                 return res.text();
             })
             .then(data => {
-                document.getElementById('editor-input').value = data;
+                const inputEditor = document.getElementById('editor-input');
+                saveState?.();
+                inputEditor.value = data;
+                showNotification?.(`Dữ liệu từ URL đã được load!`, 'success');
             })
             .catch(err => alert('Error: ' + err.message));
     } else {
-        document.getElementById('fileInput').click();
+        const fileInput = document.getElementById('fileInput');
+        fileInput.value = ''; 
+        fileInput.click();
     }
 }
 
@@ -124,7 +129,10 @@ document.getElementById('fileInput').addEventListener('change', function(evt) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-        document.getElementById('editor-input').value = e.target.result;
+        const inputEditor = document.getElementById('editor-input');
+        saveState?.();
+        inputEditor.value = e.target.result;
+        showNotification?.(`File "${file.name}" đã được load!`, 'success');
     };
     reader.readAsText(file);
 });

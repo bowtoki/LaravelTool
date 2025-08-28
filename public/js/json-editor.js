@@ -61,7 +61,7 @@ function saveState() {
     }
 }
 
-// Conversion helpers
+
 function convertJSONToXML(obj, rootName = 'root') {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<${rootName}>`;
     
@@ -271,19 +271,7 @@ function renderJSON(mode) {
             result = JSON.stringify(jsonData);
             break;
         case 'tree':
-            function traverse(obj, indent=0){
-                let str = '';
-                for(let key in obj){
-                    if(typeof obj[key] === 'object' && obj[key] !== null){
-                        str += ' '.repeat(indent) + key + ":\n";
-                        str += traverse(obj[key], indent + 2);
-                    } else {
-                        str += ' '.repeat(indent) + key + ": " + obj[key] + "\n";
-                    }
-                }
-                return str;
-            }
-            result = traverse(jsonData);
+            result = renderTree(jsonData);
             break;
         case 'view':
             for(let key in jsonData){
@@ -315,7 +303,8 @@ function renderJSON(mode) {
 
 function updateJSON() {
     try {
-        currentJSON = JSON.parse(outputArea.value);
+        const parsed = JSON.parse(outputArea.value);
+        currentJSON = parsed;
     } catch(e) {
         // alert("JSON không hợp lệ!");
     }
@@ -324,9 +313,12 @@ function updateJSON() {
 modeLinks.forEach(link => {
     link.addEventListener("click", function(e) {
         e.preventDefault();
-        updateJSON();
+        e.stopPropagation();
+
         const mode = link.getAttribute("data-mode");
+        updateJSON();
         renderJSON(mode);
+        toggleBtn.textContent = link.textContent + " ▾";
         dropdown.style.display = "none";
     });
 });
@@ -354,14 +346,21 @@ function renderTree(obj, indent = 0) {
     return str;
 }
 
-function changeOutputTreeMode() {
-    try {
-        
-        currentJSON = JSON.parse(outputArea.value);
-    } catch(e) {
-        alert("JSON không hợp lệ!");
-        return;
-    }
+let isTreeView = false;
+let tempJSONText = '';  
 
-    outputArea.value = renderTree(currentJSON);
+function changeOutputTree() {
+    if (!isTreeView) {
+        try {
+            tempJSONText = outputArea.value;        
+            const tempJSON = JSON.parse(outputArea.value);
+            outputArea.value = renderTree(tempJSON); 
+            isTreeView = true;
+        } catch(e) {
+            alert("JSON không hợp lệ!");
+        }
+    } else {
+        outputArea.value = tempJSONText;
+        isTreeView = false;
+    }
 }
