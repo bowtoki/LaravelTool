@@ -1,5 +1,5 @@
 # tech.tools
-
+Đây là dự án đơn giản đầu tiên mình làm khi đi thực tập ! 
 
 
 ## Getting started
